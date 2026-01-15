@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>BOT VIP SYSTEM 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #000; color: #0f0; font-family: monospace; padding: 20px; text-align: center; }
+        .box { border: 2px solid #0f0; padding: 20px; max-width: 400px; margin: auto; box-shadow: 0 0 15px #0f0; background: #050505; }
+        .id-box { color: #ff0; background: #111; padding: 10px; margin-bottom: 20px; border: 1px dashed #0f0; word-break: break-all; }
+        #screen { height: 80px; display: flex; align-items: center; justify-content: center; background: #000; border: 1px solid #0f0; margin-bottom: 15px; font-weight: bold; color: #fff; }
+        input { background: #111; color: #0f0; border: 1px solid #0f0; width: 100%; padding: 12px; margin-bottom: 10px; box-sizing: border-box; outline: none; }
+        button { width: 100%; padding: 15px; background: #0f0; color: #000; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+</head>
+<body>
+    <div class="box">
+        <h3>HỆ THỐNG VIP V5.0</h3>
+        <div class="id-box">ID MÁY: <span id="my-id">Đang quét...</span></div>
+        <div id="screen">ĐANG KẾT NỐI...</div>
+        <input type="text" id="key" placeholder="NHẬP KEY VIP">
+        <input type="text" id="hist" placeholder="LỊCH SỬ (VD: B,C,T)">
+        <button onclick="getFree()">LẤY KEY FREE</button>
+        <button style="background:#ff0" onclick="predict()">SOI CẦU VIP</button>
+    </div>
+
+    <script>
+        let deviceId = "";
+        const API = "https://tên-của-ông.pythonanywhere.com"; // THAY LINK CỦA ÔNG
+
+        async function init() {
+            try {
+                const fp = await FingerprintJS.load();
+                const result = await fp.get();
+                deviceId = result.visitorId;
+                document.getElementById('my-id').innerText = deviceId;
+                document.getElementById('screen').innerText = "SẴN SÀNG!";
+            } catch (e) { document.getElementById('screen').innerText = "LỖI ID!"; }
+        }
+
+        async function predict() {
+            const screen = document.getElementById('screen');
+            screen.innerText = "ĐANG TÍNH...";
+            try {
+                const res = await fetch(`${API}/predict`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ id: deviceId, key: document.getElementById('key').value, history: document.getElementById('hist').value })
+                });
+                const data = await res.json();
+                screen.innerText = data.status === "ok" ? data.data : data.msg;
+            } catch (e) { screen.innerText = "LỖI SERVER!"; }
+        }
+
+        function getFree() {
+            window.location.href = "https://link1s.com/st?api=TOKEN&url=" + encodeURIComponent(`${API}/activate?id=${deviceId}`);
+        }
+        init();
+    </script>
+</body>
+</html>
